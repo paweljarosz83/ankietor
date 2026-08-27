@@ -1,0 +1,23 @@
+# Normalizacja koncow linii. Powod nie jest kosmetyczny: Flyway liczy sume
+# kontrolna migracji z tresci pliku, wiec CRLF lokalnie i LF na serwerze daje
+# rozne sumy dla tej samej migracji i blad "checksum mismatch" przy starcie.
+# Wymuszamy LF w repozytorium dla wszystkiego, co czyta aplikacja.
+
+* text=auto eol=lf
+
+*.sql        text eol=lf
+*.java       text eol=lf
+*.xml        text eol=lf
+*.properties text eol=lf
+*.html       text eol=lf
+*.css        text eol=lf
+*.js         text eol=lf
+*.yml        text eol=lf
+*.md         text eol=lf
+
+# Binarne - bez konwersji
+*.woff  binary
+*.woff2 binary
+*.png   binary
+*.jpg   binary
+*.ico   binary
