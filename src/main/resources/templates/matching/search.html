@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: html(
+          tytul='Dopasuj pytanie',
+          podtytul='Wklej pytanie z ankiety klienta i sprawdz, czy odpowiadaliscie juz na to samo',
+          aktywny='szukaj',
+          zawartosc=~{::zawartosc})}">
+<body>
+<th:block th:fragment="zawartosc">
+
+    <form th:action="@{/szukaj}" method="get" class="mb-4">
+        <div class="card">
+            <div class="card-body">
+                <label for="pytanie" class="form-label small fw-semibold">Pytanie z ankiety</label>
+                <textarea id="pytanie" name="pytanie" class="form-control mb-3" rows="3"
+                          th:text="${pytanie}"
+                          placeholder="Wklej pytanie w takiej formie, w jakiej przyszlo od klienta"
+                          autofocus></textarea>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="small text-body-secondary">
+                        Tryb dopasowania: <code th:text="${tryb}">lexical</code>,
+                        prog <span th:text="${prog} + '%'">52%</span>
+                    </span>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search me-1"></i> Szukaj propozycji
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div th:if="${szukano and propozycje.isEmpty()}" class="card border-warning">
+        <div class="card-body text-center py-4">
+            <i class="bi bi-question-circle fs-2 text-warning"></i>
+            <p class="mt-2 mb-1 fw-semibold">Brak dopasowania powyzej progu</p>
+            <p class="text-body-secondary small mb-3">
+                Na to pytanie prawdopodobnie nie odpowiadaliscie jeszcze w tej formie.
+                Napisz odpowiedz od zera - zasili kolejne propozycje.
+            </p>
+            <a th:href="@{/baza-wiedzy/nowa(pytanie=${pytanie})}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-plus-lg me-1"></i> Dodaj jako nowa pare
+            </a>
+        </div>
+    </div>
+
+    <div th:if="${not propozycje.isEmpty()}">
+        <p class="small text-body-secondary mb-2">
+            Znalezione propozycje, uszeregowane po podobienstwie.
+            Wybierz najblizsza, popraw ja i zapisz jako nowa pare.
+        </p>
+
+        <div class="card mb-3" th:each="p, stat : ${propozycje}">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fw-medium" th:text="${p.question}">pytanie</span>
+                <span class="badge ms-2 flex-shrink-0"
+                      th:classappend="${p.similarityPercent() >= 75} ? 'text-bg-success'
+                                    : (${p.similarityPercent() >= 60} ? 'text-bg-primary' : 'text-bg-secondary')"
+                      th:text="${p.similarityPercent()} + '%'">63%</span>
+            </div>
+            <div class="card-body">
+                <p class="mb-3" th:text="${p.answer}">odpowiedz</p>
+                <a th:href="@{/baza-wiedzy/nowa(pytanie=${pytanie}, odpowiedz=${p.answer})}"
+                   class="btn btn-sm btn-primary">
+                    <i class="bi bi-arrow-down-square me-1"></i> Uzyj tej odpowiedzi
+                </a>
+                <a th:href="@{/baza-wiedzy/{id}/edycja(id=${p.id})}"
+                   class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-pencil me-1"></i> Edytuj oryginal
+                </a>
+            </div>
+        </div>
+    </div>
+
+</th:block>
+</body>
+</html>

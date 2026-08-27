@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: html(
+          tytul=${form.isNew()} ? 'Nowa para' : 'Edycja pary',
+          podtytul='Pytanie z ankiety i odpowiedz, ktora ma zasilac przyszle propozycje',
+          aktywny=${form.isNew()} ? 'nowa' : 'baza',
+          zawartosc=~{::zawartosc})}">
+<body>
+<th:block th:fragment="zawartosc">
+
+    <div class="row">
+        <div class="col-lg-9">
+            <form th:action="@{/baza-wiedzy}" th:object="${form}" method="post" novalidate>
+                <input type="hidden" th:field="*{id}">
+
+                <div th:if="${#fields.hasAnyErrors()}"
+                     class="alert alert-danger py-2 small" role="alert">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    Formularz zawiera bledy. Popraw zaznaczone pola.
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">Pytanie</h6>
+                    </div>
+                    <div class="card-body">
+                        <textarea th:field="*{question}" class="form-control" rows="3"
+                                  th:classappend="${#fields.hasErrors('question')} ? 'is-invalid'"
+                                  placeholder="Wklej pytanie w takiej formie, w jakiej przyszlo od klienta"></textarea>
+                        <div class="invalid-feedback" th:errors="*{question}">blad</div>
+                        <div class="form-text">
+                            Zapisz oryginalne sformulowanie. Rozne warianty tego samego pytania
+                            poprawiaja jakosc dopasowania.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6 class="card-title mb-0">Odpowiedz</h6>
+                    </div>
+                    <div class="card-body">
+                        <textarea th:field="*{answer}" class="form-control" rows="7"
+                                  th:classappend="${#fields.hasErrors('answer')} ? 'is-invalid'"
+                                  placeholder="Odpowiedz, ktora chcesz moc ponownie wykorzystac"></textarea>
+                        <div class="invalid-feedback" th:errors="*{answer}">blad</div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-1"></i> Zapisz
+                    </button>
+                    <a th:href="@{/baza-wiedzy}" class="btn btn-outline-secondary">Anuluj</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="card bg-body-tertiary">
+                <div class="card-body small text-body-secondary">
+                    <p class="fw-semibold text-body mb-2">
+                        <i class="bi bi-lightbulb me-1"></i> Dane syntetyczne
+                    </p>
+                    <p class="mb-0">
+                        W tym projekcie wpisujemy wylacznie wymyslona tresc.
+                        Nie wprowadzaj rzeczywistych danych firmowych ani danych klientow.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</th:block>
+</body>
+</html>

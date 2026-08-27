@@ -1,0 +1,13 @@
+/* Ankietor - drobne korekty ponad AdminLTE. Wszystko, co tu wchodzi,
+   musi miec powod - to nie miejsce na przestylowanie szablonu. */
+
+/* AdminLTE nie rozciaga wrappera na pelna wysokosc, gdy strona ma malo
+   tresci - sidebar konczyl sie w polowie ekranu. */
+.app-wrapper {
+    min-height: 100vh;
+}
+
+/* Dluga tresc pytania i odpowiedzi w tabeli - lamanie zamiast rozpychania. */
+.table td {
+    overflow-wrap: anywhere;
+}

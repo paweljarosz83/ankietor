@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pl"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="html(tytul, podtytul, aktywny, zawartosc)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="'Ankietor — ' + ${tytul}">Ankietor</title>
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap-icons/bootstrap-icons.min.css}">
+    <link rel="stylesheet" th:href="@{/vendor/adminlte/adminlte.min.css}">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+<div class="app-wrapper">
+
+    <nav class="app-header navbar navbar-expand bg-body">
+        <div class="container-fluid">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+                        <i class="bi bi-list"></i>
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item me-3">
+                    <span class="badge text-bg-secondary" th:text="'tryb: ' + ${@environment.getProperty('ankietor.matching.mode')}">tryb</span>
+                </li>
+                <li class="nav-item me-2 text-body-secondary small">
+                    <i class="bi bi-person-circle"></i>
+                    <span sec:authentication="name">uzytkownik</span>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{/logout}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-box-arrow-right"></i> Wyloguj
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <div class="sidebar-brand">
+            <a th:href="@{/baza-wiedzy}" class="brand-link">
+                <i class="bi bi-clipboard-check brand-image opacity-75 ms-3 me-2"></i>
+                <span class="brand-text fw-light">Ankietor</span>
+            </a>
+        </div>
+        <div class="sidebar-wrapper">
+            <nav class="mt-2">
+                <ul class="nav sidebar-menu flex-column" role="menu">
+                    <li class="nav-item">
+                        <a th:href="@{/szukaj}" class="nav-link"
+                           th:classappend="${aktywny == 'szukaj'} ? 'active'">
+                            <i class="nav-icon bi bi-search"></i>
+                            <p>Dopasuj pytanie</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/baza-wiedzy}" class="nav-link"
+                           th:classappend="${aktywny == 'baza'} ? 'active'">
+                            <i class="nav-icon bi bi-database"></i>
+                            <p>Baza wiedzy</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/baza-wiedzy/nowa}" class="nav-link"
+                           th:classappend="${aktywny == 'nowa'} ? 'active'">
+                            <i class="nav-icon bi bi-plus-circle"></i>
+                            <p>Nowa para</p>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </aside>
+
+    <main class="app-main">
+        <div class="app-content-header">
+            <div class="container-fluid">
+                <h3 class="mb-0" th:text="${tytul}">Tytul</h3>
+                <p class="text-body-secondary mb-0 small" th:if="${podtytul}" th:text="${podtytul}"></p>
+            </div>
+        </div>
+        <div class="app-content">
+            <div class="container-fluid">
+
+                <div th:if="${komunikat}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle me-1"></i>
+                    <span th:text="${komunikat}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zamknij"></button>
+                </div>
+
+                <th:block th:replace="${zawartosc}">Zawartosc strony</th:block>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <div class="float-end d-none d-sm-inline">Projekt zaliczeniowy 10xDevs 3.0</div>
+        <strong>Ankietor</strong> &mdash; propozycje odpowiedzi na powtarzajace sie pytania
+    </footer>
+
+</div>
+<script th:src="@{/vendor/bootstrap/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/vendor/adminlte/adminlte.min.js}"></script>
+</body>
+</html>

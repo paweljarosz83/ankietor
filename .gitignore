@@ -1,0 +1,41 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### IntelliJ ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### Eclipse / STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Logi i crash dumpy ###
+*.log
+logs/
+hs_err_pid*
+replay_pid*
+
+### Lokalna konfiguracja i sekrety ###
+.env
+.env.local
+application-local.properties
+application-secrets.properties
+*.pem
+*.key
