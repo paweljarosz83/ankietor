@@ -1,6 +1,6 @@
 # PRD — Ankietor
 
-**Wersja:** 0.2 (szkic do zatwierdzenia)
+**Wersja:** 0.3
 **Data:** 2026-08-27
 **Autor:** Paweł Jarosz
 **Kontekst:** projekt zaliczeniowy 10xDevs 3.0, termin złożenia 14.09.2026
@@ -106,11 +106,60 @@ Zapisane, żeby nie wracały w trakcie:
 - wersjonowanie odpowiedzi i historia zmian
 - kategorie i tagi pytań
 - **generowanie** nowej odpowiedzi przez LLM zamiast wyszukiwania istniejącej
-- porównanie obu trybów obok siebie na jednym ekranie
 - wielojęzyczność ankiet
 - statystyki i raporty
 
-Ostatnie dwie pozycje z listy „poza MVP" są kandydatami numer jeden do dodania, jeśli zostanie czas — porównanie trybów obok siebie jest tanie i bardzo dobrze wygląda w prezentacji.
+Ekran porównania trybów **został dodany do MVP** — patrz sekcja 4a.
+
+## 4a. Ekran porównania trybów — rozszerzenie zakresu
+
+**Dodane po zamknięciu wymagań certyfikacji**, na wyraźne życzenie właściciela projektu.
+Zapisane tutaj, a nie dopisane po cichu, bo `AGENTS.md` zabrania rozszerzania zakresu MVP
+bez odnotowania.
+
+### Co robi
+
+Jeden ekran, jedno pytanie, dwie kolumny obok siebie: tryb aktywny i warstwa semantyczna.
+Ten sam zbiór danych, ten sam próg. Cel to **pokazać, której klasy pytań tryb leksykalny
+nie obsługuje** — zamiast twierdzić, że warstwa semantyczna pomoże.
+
+### Prawa kolumna jest mockupem i jest tak oznaczona
+
+Prawdziwy tryb semantyczny wymaga dostawcy embeddingów, klucza API i zgody na wysyłanie
+treści pytań poza infrastrukturę. Żadna z tych rzeczy nie jest potrzebna do celu
+demonstracyjnego, więc kolumna działa na **ręcznie zapisanym słowniku pojęć**.
+
+Trzy rzeczy, które to czyni uczciwym:
+
+1. **Wyniki są prawdziwe** — to trafienia w istniejące pary, nie zmyślone treści.
+2. **Procent jest umowny i tak podpisany** (`~80%`), bo słownik nie mierzy stopnia
+   podobieństwa. `mode()` zwraca `mockup slownika pojec`, a ekran ma na górze ostrzeżenie.
+3. **Nic nie jest przedstawiane jako AI.**
+
+### Dlaczego słownik, a nie atrapa ze stałą listą wyników
+
+Atrapa kosztowałaby tyle samo i nie dowodziłaby niczego. Słownik pojęć **realnie
+rozwiązuje** kryterium B1 na trzech przypadkach, na których tryb leksykalny zwraca zero.
+Różnica na ekranie jest więc konsekwencją mechanizmu, nie scenografii.
+
+### Miejsce, w które wejdzie AI
+
+`MockSemanticQuestionMatcher` implementuje ten sam interfejs `QuestionMatcher`, co reszta.
+Podmiana na `SemanticQuestionMatcher` z prawdziwym `EmbeddingProvider` **nie dotknie
+kontrolera ani widoku** — zmienia się jeden bean.
+
+### Koszt
+
+Jedna klasa, jeden kontroler, jeden widok, siedem testów. Bez migracji, bez nowej encji,
+bez zależności w `pom.xml`. Słownik jest zaszyty w kodzie, bo mockup nie potrzebuje CRUD-a —
+gdyby miał zostać na stałe, trafiłby do tabeli.
+
+### Test, który pilnuje sensu tego ekranu
+
+`MockSemanticQuestionMatcherTest` sprawdza nie to, że mockup jest dobry, ale że
+**domyka lukę, którą tryb leksykalny zostawia**: dla tego samego zapytania mockup
+znajduje parę o ISO 9001, a tryb leksykalny jej nie znajduje. Gdyby kiedyś zaczął
+znajdować, ekran porównania przestałby mieć sens — i test to wychwyci.
 
 ## 5. Kryteria sukcesu
 

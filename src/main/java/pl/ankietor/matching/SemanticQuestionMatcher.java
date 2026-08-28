@@ -2,6 +2,7 @@ package pl.ankietor.matching;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import java.util.List;
  * bylaby gorsza od bledu.
  */
 @Component
+@Primary
 @ConditionalOnProperty(name = "ankietor.matching.mode", havingValue = "semantic")
 public class SemanticQuestionMatcher implements QuestionMatcher {
 

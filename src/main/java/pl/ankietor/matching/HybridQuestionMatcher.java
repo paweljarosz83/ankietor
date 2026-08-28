@@ -1,6 +1,7 @@
 package pl.ankietor.matching;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Map;
  * Nie jest aktywny w MVP. Wymaga tych samych warunkow co tryb semantyczny.
  */
 @Component
+@Primary
 @ConditionalOnProperty(name = "ankietor.matching.mode", havingValue = "hybrid")
 public class HybridQuestionMatcher implements QuestionMatcher {
 

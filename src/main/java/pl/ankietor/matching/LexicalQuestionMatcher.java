@@ -2,6 +2,7 @@ package pl.ankietor.matching;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,7 @@ import java.util.List;
  * "systemy zarzadzania jakoscia". To kryterium B1 z PRD i domena trybu semantycznego.
  */
 @Component
+@Primary
 @ConditionalOnProperty(name = "ankietor.matching.mode", havingValue = "lexical", matchIfMissing = true)
 public class LexicalQuestionMatcher implements QuestionMatcher {
 
