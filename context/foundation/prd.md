@@ -246,9 +246,9 @@ Wymaganie nr 3 jest spełnione **bez AI** — zgodnie z lekcją 4.2, w której l
 
 - **Próg podobieństwa — ROZSTRZYGNIĘTE: `0.52`.** Wyznaczone empirycznie na 45 parach
   danych startowych i 15 przypadkach testowych: najniższe prawdziwe trafienie 55%,
-  najwyższe fałszywe 50%. Próg 0.52 daje 3 punkty zapasu w obie strony. Zastrzeżenie:
-  15 przypadków to nie zbiór walidacyjny — próg jest uzasadniony, nie udowodniony,
-  i wraca do rozmowy przy istotnym powiększeniu bazy wiedzy.
+  najwyższe fałszywe 50%. Próg 0.52 daje 3 punkty zapasu w obie strony. Podstawa pomiaru to
+  15 przypadków testowych, więc próg wymaga ponownego pomiaru
+  przy istotnym powiększeniu bazy wiedzy.
 - **Metryka podobieństwa — ROZSTRZYGNIĘTE: `word_similarity` z `similarity` jako
   rozstrzygnięciem remisów.** Powód i pomiary w `tech-stack.md`, sekcja 3.1a.
 - **Słownik pojęć jako wzmocnienie trybu leksykalnego** — tabela odwzorowań typu „ISO 9001 ↔ system zarządzania jakością" podniosłaby tryb leksykalny w stronę kryterium B1 i pogłębiła CRUD. Decyzja po zmierzeniu, jak radzą sobie same trigramy. Domyślnie: **nie w MVP**.

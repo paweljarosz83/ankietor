@@ -58,25 +58,18 @@ w podróży ani bez sieci firmowej.
 | R-9 — długie wejście | **częściowo.** `@Size` waliduje górną granicę, brak testu na zachowanie widoku |
 | R-10 — hasło admina | **brak testu** |
 
-## 3. Problem wyroczni w tym projekcie
+## 3. Wyrocznia testów
 
-Jedna rzecz do zapisania, bo dotyczy nas bezpośrednio i łatwo o niej zapomnieć.
+Asercje muszą brać oczekiwany wynik z wymagań, nie z uruchomienia kodu. Testy A1
+sprawdzają, że właściwa para trafia do **top 3** — kryterium pochodzi z PRD, nie z tego,
+co zwraca funkcja.
 
-Testy A1 sprawdzają, że właściwa para trafia do **top 3**, a nie że podobieństwo równa się
-konkretnej liczbie. Wyrocznia pochodzi z PRD (kryterium A1), nie z implementacji — i to
-jest poprawne.
+Jedna wartość wymaga uwagi przy utrzymaniu: **próg 0.52** pochodzi z pomiaru na danych
+startowych. Przy zmianie metryki podobieństwa albo istotnym powiększeniu bazy wiedzy
+trzeba go zmierzyć ponownie, a nie przyjąć, że nadal pasuje.
 
-**Ale próg 0.52 został wyznaczony przez pomiar działającej implementacji.** Testy używają
-tej wartości jako stałej. Oznacza to, że w tym jednym miejscu wyrocznia jest **częściowo
-odbiciem kodu**: gdyby metryka podobieństwa była źle wybrana, próg dopasowałby się do
-błędu, a testy przeszłyby na zielono.
-
-Złagodzenie, nie usunięcie: test B1 sprawdza, że coś **nie** jest znajdowane. Test, który
-pilnuje granicy, znacznie trudniej zabetonować przypadkowo — bo wymaga, żeby system się
-mylił w przewidywalny sposób.
-
-Do zapamiętania przy dowożeniu faz z §4: **czytaj asercje i pytaj, skąd wzięła się każda
-liczba.** Jeśli odpowiedź brzmi „bo tyle zwraca funkcja", to nie jest test.
+Reguła przy dopisywaniu testów: przy każdej asercji zapytaj, skąd wzięła się liczba.
+Jeśli odpowiedź brzmi „bo tyle zwraca funkcja", to nie jest test.
 
 ## 4. Fazy rollout'u
 

@@ -5,9 +5,6 @@
 **Cel:** publiczny URL aplikacji, koszt 0 zł
 **Status:** plan zatwierdzony, wykonanie przed nami
 
-Ten dokument nie jest opisem po fakcie. Jest planem sporządzonym **przed** wdrożeniem,
-żeby przy pierwszej awarii dało się odpowiedzieć na pytanie „co miało się stać?"
-zamiast rekonstruować to z historii pracy.
 
 ---
 
