@@ -127,7 +127,7 @@ Prawdziwy tryb semantyczny wymaga dostawcy embeddingów, klucza API i zgody na w
 treści pytań poza infrastrukturę. Żadna z tych rzeczy nie jest potrzebna do celu
 demonstracyjnego, więc kolumna działa na **ręcznie zapisanym słowniku pojęć**.
 
-Trzy rzeczy, które to czyni uczciwym:
+Trzy właściwości tego rozwiązania:
 
 1. **Wyniki są prawdziwe** — to trafienia w istniejące pary, nie zmyślone treści.
 2. **Procent jest umowny i tak podpisany** (`~80%`), bo słownik nie mierzy stopnia

@@ -25,7 +25,7 @@ dla planu testów.
 | R-9 | Użytkownik wpisuje bardzo długi tekst i psuje widok albo zapis | niski | średnie | **3** | wejście od użytkownika |
 | R-10 | Konto administratora powstaje z hasłem, którego nikt nie zna | średni | średnie | **3** | `infrastructure.md` §7 |
 
-**Świadomie NIE na mapie** — odpowiedź na pytanie „na co nie ma iść budżet testowy":
+**Poza zakresem testów** — odpowiedź na pytanie „na co nie ma iść budżet testowy":
 
 - awarie dostawcy hostingu i bazy — tańsze do obsłużenia obserwowalnością niż testem
 - wydajność przy dużym wolumenie — 45 par, jeden użytkownik, brak wymagań wydajnościowych
@@ -34,7 +34,7 @@ dla planu testów.
 
 ## 2. Profil istniejących testów
 
-**34 testy, cztery klasy.** Stan uczciwy: brak testów jednostkowych w klasycznym sensie —
+**34 testy, cztery klasy.** Brak testów jednostkowych w klasycznym sensie —
 wszystkie testy podnoszą kontekst Springa i uderzają w prawdziwą bazę.
 
 | Klasa | Liczba | Poziom | Co chroni |
@@ -76,9 +76,8 @@ Jeśli odpowiedź brzmi „bo tyle zwraca funkcja", to nie jest test.
 ### Faza 1 — zapisać decyzję o widoczności par ✅ WYKONANE 28.08.2026
 - **Ryzyko:** R-4
 - **Cel:** rozstrzygnąć i **zapisać**, czy baza wiedzy jest wspólna dla wszystkich zalogowanych, czy prywatna per użytkownik
-- **Dlaczego pierwsza:** to nie jest zadanie testowe, a produktowe. Nie da się napisać testu autoryzacji, dopóki nie wiadomo, jaka jest reguła. Obecnie baza jest wspólna i **nikt tego nigdzie nie zapisał** — czyli nie da się stwierdzić, czy to decyzja, czy przeoczenie
-- **Wynik:** wpis w `prd.md`, a jeśli baza ma być prywatna — nowy slice w roadmapie
-- **Wynik faktyczny:** decyzja zapisana w `prd.md` §6a. Odczyt wspólny, bo prywatna baza zniszczyłaby cel produktu. Modyfikacja własnościowa: autor albo `ROLE_ADMIN`. Dodany widok „moje pary" jako zasoby przypisane do użytkownika.
+- **Dlaczego pierwsza:** to zadanie produktowe, nie testowe. Testu autoryzacji nie da się napisać, dopóki nie jest ustalona reguła
+- **Wynik:** decyzja zapisana w `prd.md` §6a. Odczyt wspólny, bo prywatna baza zniszczyłaby cel produktu. Modyfikacja własnościowa: autor albo `ROLE_ADMIN`. Dodany widok „moje pary" jako zasoby przypisane do użytkownika.
 - **Test:** `OwnershipTest` — 10 testów, w tym trzy na próbę modyfikacji cudzej pary przez podmianę identyfikatora
 
 ### Faza 2 — kodowanie znaków na całej ścieżce ⬜ do zrobienia
@@ -103,8 +102,8 @@ Jeśli odpowiedź brzmi „bo tyle zwraca funkcja", to nie jest test.
 - **Dlaczego test tego nie złapie:** to nie jest błąd działania aplikacji, a błąd procesu. Właściwym miejscem jest bramka, nie test
 - **Uwaga:** dziś sprawdzane ręcznie przed commitem. Ręczna weryfikacja przestaje działać w momencie, gdy commituje ktoś inny
 
-**Faz nie szereguję po ryzyku.** Faza 1 dotyczy ryzyka priorytetu 2, ale jest pierwsza,
-bo pozostałe fazy nie zmienią się od jej wyniku, a ona może wygenerować nowy slice.
+**Kolejność faz nie wynika wprost z priorytetu ryzyka.** Faza 1 dotyczy ryzyka priorytetu 2, ale jest pierwsza,
+bo jako jedyna może wygenerować nowy slice w roadmapie.
 
 ## 5. Bramki jakości
 
