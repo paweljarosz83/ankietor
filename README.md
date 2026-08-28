@@ -28,6 +28,10 @@ Uzasadnienie każdego wyboru: [`context/foundation/tech-stack.md`](context/found
 |---|---|
 | [`context/foundation/prd.md`](context/foundation/prd.md) | Problem, użytkownik, zakres MVP, kryteria sukcesu, ryzyka |
 | [`context/foundation/tech-stack.md`](context/foundation/tech-stack.md) | Decyzje techniczne z uzasadnieniem i pomiarami |
+| [`context/foundation/roadmap.md`](context/foundation/roadmap.md) | Sekwencja pracy: foundations, slice’y, zależności, parking |
+| [`context/foundation/infrastructure.md`](context/foundation/infrastructure.md) | Wybór platformy, testy anti-bias, rollback, ryzyka |
+| [`context/foundation/test-plan.md`](context/foundation/test-plan.md) | Mapa ryzyk, bramki jakości, cookbook testów |
+| [`context/deployment/deploy-plan.md`](context/deployment/deploy-plan.md) | Procedura wdrożenia z podziałem odpowiedzialności |
 | [`AGENTS.md`](AGENTS.md) | Kontrakt dla agentów AI pracujących w tym repozytorium |
 
 ---
