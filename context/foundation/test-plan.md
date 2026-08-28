@@ -5,8 +5,9 @@
 **Format:** wg lekcji M3L1
 
 > Ten plan powstał, gdy testy już istniały. Nie udaje więc strategii sprzed pierwszego
-> testu — jest **audytem tego, co chronimy, i wskazaniem, czego nie chronimy**. Sekcja 4
-> zawiera fazy jeszcze niewykonane.
+> testu — jest **audytem tego, co chronimy, i wskazaniem, czego nie chronimy**. Faza 1
+> została wykonana 28.08; sekcja 4
+> zawiera cztery pozostałe.
 
 ---
 
@@ -21,7 +22,7 @@ dla planu testów.
 | R-1 | Użytkownik dostaje propozycję, która nie dotyczy jego pytania, i wysyła ją klientowi | **wysoki** | średnie | **1** | PRD kryterium A2 |
 | R-2 | Na pytanie, na które firma już odpowiadała, system nie znajduje niczego — użytkownik pisze od zera i tworzy niespójność | **wysoki** | **wysokie** | **1** | PRD §1, cel produktu |
 | R-3 | Osoba niezalogowana widzi treść odpowiedzi firmy o certyfikatach i ubezpieczeniach | **wysoki** | niskie | **2** | nadużycie, oś bezpieczeństwa |
-| R-4 | Zalogowany użytkownik dosięga pary innego użytkownika przez podmianę identyfikatora w URL | średni | średnie | **2** | nadużycie, IDOR |
+| R-4 | Zalogowany użytkownik modyfikuje albo usuwa parę innego autora przez podmianę identyfikatora w żądaniu | średni | średnie | **2** | nadużycie, IDOR — **ROZSTRZYGNIĘTE 28.08**, patrz §4 faza 1 |
 | R-5 | Zapisana odpowiedź nie pojawia się w propozycjach — baza wiedzy nie rośnie, produkt cicho przestaje działać | **wysoki** | niskie | **2** | PRD kryterium A3 |
 | R-6 | Polskie znaki rozsypują się między formularzem, bazą i widokiem; odpowiedź wysłana klientowi zawiera „krzaki" | średni | średnie | **2** | doświadczenie własne, kodowanie na Windows |
 | R-7 | Migracja odrzucona przy starcie na innym systemie plików — aplikacja nie wstaje po wdrożeniu | średni | średnie | **3** | Flyway liczy sumy kontrolne z treści plików |
@@ -38,7 +39,7 @@ dla planu testów.
 
 ## 2. Profil istniejących testów
 
-**24 testy, trzy klasy.** Stan uczciwy: brak testów jednostkowych w klasycznym sensie —
+**34 testy, cztery klasy.** Stan uczciwy: brak testów jednostkowych w klasycznym sensie —
 wszystkie testy podnoszą kontekst Springa i uderzają w prawdziwą bazę.
 
 | Klasa | Liczba | Poziom | Co chroni |
@@ -46,6 +47,7 @@ wszystkie testy podnoszą kontekst Springa i uderzają w prawdziwą bazę.
 | `QuestionMatcherTest` | 10 | integracyjny, prawdziwy Postgres | R-1, R-2 |
 | `MainFlowE2ETest` | 7 | przez MockMvc, pełny kontekst | R-3, R-5 |
 | `MockSemanticQuestionMatcherTest` | 7 | integracyjny | granica trybu leksykalnego |
+| `OwnershipTest` | 10 | przez MockMvc, dwóch użytkowników | R-4 |
 
 **Konsekwencja tego profilu:** suita jest wolna (~90 s lokalnie) i wymaga dostępnej bazy.
 Zaakceptowane — uzasadnienie w `tech-stack.md` §3.3. Cena: nie da się uruchomić testów
@@ -55,7 +57,7 @@ w podróży ani bez sieci firmowej.
 
 | Ryzyko | Stan |
 |---|---|
-| R-4 — IDOR | **brak testu.** Encja nie ma właściciela w sensie autoryzacji, więc każdy zalogowany widzi wszystko. To decyzja produktowa, nie luka, ale **nigdzie nie zapisana** |
+| R-4 — IDOR | ✅ **pokryte.** `OwnershipTest`, 10 testów: odczyt wspólny, modyfikacja własnościowa, widok „moje pary". Reguła zapisana w `prd.md` §6a |
 | R-6 — kodowanie | **brak testu automatycznego.** Sprawdzone ręcznie w przeglądarce |
 | R-7 — sumy kontrolne migracji | **brak testu.** Złagodzone przez `.gitattributes` |
 | R-9 — długie wejście | **częściowo.** `@Size` waliduje górną granicę, brak testu na zachowanie widoku |
@@ -83,12 +85,13 @@ liczba.** Jeśli odpowiedź brzmi „bo tyle zwraca funkcja", to nie jest test.
 
 ## 4. Fazy rollout'u
 
-### Faza 1 — zapisać decyzję o widoczności par ⬜ do zrobienia
+### Faza 1 — zapisać decyzję o widoczności par ✅ WYKONANE 28.08.2026
 - **Ryzyko:** R-4
 - **Cel:** rozstrzygnąć i **zapisać**, czy baza wiedzy jest wspólna dla wszystkich zalogowanych, czy prywatna per użytkownik
 - **Dlaczego pierwsza:** to nie jest zadanie testowe, a produktowe. Nie da się napisać testu autoryzacji, dopóki nie wiadomo, jaka jest reguła. Obecnie baza jest wspólna i **nikt tego nigdzie nie zapisał** — czyli nie da się stwierdzić, czy to decyzja, czy przeoczenie
 - **Wynik:** wpis w `prd.md`, a jeśli baza ma być prywatna — nowy slice w roadmapie
-- **Test:** dopiero po decyzji
+- **Wynik faktyczny:** decyzja zapisana w `prd.md` §6a. Odczyt wspólny, bo prywatna baza zniszczyłaby cel produktu. Modyfikacja własnościowa: autor albo `ROLE_ADMIN`. Dodany widok „moje pary" jako zasoby przypisane do użytkownika.
+- **Test:** `OwnershipTest` — 10 testów, w tym trzy na próbę modyfikacji cudzej pary przez podmianę identyfikatora
 
 ### Faza 2 — kodowanie znaków na całej ścieżce ⬜ do zrobienia
 - **Ryzyko:** R-6
@@ -176,7 +179,7 @@ w repozytorium albo przekroczenie 50 plików.
 | Mapa ryzyk | ✅ |
 | Audyt istniejących testów | ✅ |
 | Cookbook z realnych wzorców | ✅ |
-| Faza 1 — widoczność par | ⬜ |
+| Faza 1 — widoczność par | ✅ |
 | Faza 2 — kodowanie znaków | ⬜ |
 | Faza 3 — konto administratora | ⬜ |
 | Faza 4 — długie wejście | ⬜ |

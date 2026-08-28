@@ -17,7 +17,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.ankietor.knowledge.dtos.QuestionAnswerForm;
 import pl.ankietor.knowledge.models.QuestionAnswer;
 import pl.ankietor.knowledge.services.QuestionAnswerService;
+import pl.ankietor.security.models.User;
 import pl.ankietor.security.models.UserDetailsImpl;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/baza-wiedzy")
@@ -31,18 +35,36 @@ public class QuestionAnswerController {
         this.service = service;
     }
 
+    /**
+     * Lista bazy wiedzy. Parametr moje przelacza na widok zasobow przypisanych
+     * do zalogowanego uzytkownika.
+     */
     @GetMapping
-    public String list(@RequestParam(defaultValue = "0") int page, Model model) {
-        Page<QuestionAnswer> result = service.page(PageRequest.of(Math.max(page, 0), PAGE_SIZE));
+    public String list(@RequestParam(defaultValue = "0") int page,
+                       @RequestParam(defaultValue = "false") boolean moje,
+                       @AuthenticationPrincipal UserDetailsImpl principal,
+                       Model model) {
+
+        User me = principal == null ? null : principal.getUser();
+        PageRequest request = PageRequest.of(Math.max(page, 0), PAGE_SIZE);
+
+        Page<QuestionAnswer> result = (moje && me != null)
+                ? service.pageByAuthor(me, request)
+                : service.page(request);
+
+        // Uprawnienie do edycji liczone raz per wiersz - widok nie powinien wolac
+        // serwisu w petli.
+        Map<Long, Boolean> mozeEdytowac = new HashMap<>();
+        result.getContent().forEach(qa -> mozeEdytowac.put(qa.getId(), service.canModify(qa, me)));
+
         model.addAttribute("pary", result);
+        model.addAttribute("moje", moje);
         model.addAttribute("total", service.total());
+        model.addAttribute("totalMoje", me == null ? 0 : service.totalByAuthor(me));
+        model.addAttribute("mozeEdytowac", mozeEdytowac);
         return "knowledge/list";
     }
 
-    /**
-     * Formularz nowej pary. Parametry pozwalaja wejsc tu wprost z ekranu propozycji
-     * z wypelnionym pytaniem i wybrana odpowiedzia - to domkniecie glownego przeplywu.
-     */
     @GetMapping("/nowa")
     public String createForm(@RequestParam(name = "pytanie", required = false) String pytanie,
                              @RequestParam(name = "odpowiedz", required = false) String odpowiedz,
@@ -55,8 +77,11 @@ public class QuestionAnswerController {
     }
 
     @GetMapping("/{id}/edycja")
-    public String editForm(@PathVariable Long id, Model model) {
-        model.addAttribute("form", service.formFor(id));
+    public String editForm(@PathVariable Long id,
+                           @AuthenticationPrincipal UserDetailsImpl principal,
+                           Model model) {
+        User me = principal == null ? null : principal.getUser();
+        model.addAttribute("form", service.formFor(id, me));
         return "knowledge/form";
     }
 
@@ -79,8 +104,10 @@ public class QuestionAnswerController {
     }
 
     @PostMapping("/{id}/usun")
-    public String delete(@PathVariable Long id, RedirectAttributes flash) {
-        service.delete(id);
+    public String delete(@PathVariable Long id,
+                         @AuthenticationPrincipal UserDetailsImpl principal,
+                         RedirectAttributes flash) {
+        service.delete(id, principal == null ? null : principal.getUser());
         flash.addFlashAttribute("komunikat", "Usunieto pare pytanie-odpowiedz.");
         return "redirect:/baza-wiedzy";
     }

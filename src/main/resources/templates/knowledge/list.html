@@ -1,24 +1,47 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout/main :: html(tytul='Baza wiedzy', podtytul='Liczba par pytanie-odpowiedz: ' + ${total}, aktywny='baza', zawartosc=~{::zawartosc})}">
+      th:replace="~{layout/main :: html(
+          tytul='Baza wiedzy',
+          podtytul=${moje} ? ('Moje pary: ' + ${totalMoje}) : ('Liczba par pytanie-odpowiedz: ' + ${total}),
+          aktywny='baza',
+          zawartosc=~{::zawartosc})}">
 <body>
 <th:block th:fragment="zawartosc">
 
-    <div class="d-flex justify-content-end mb-3">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Zakres listy">
+            <a th:href="@{/baza-wiedzy}" class="btn"
+               th:classappend="${moje} ? 'btn-outline-secondary' : 'btn-secondary'">
+                <i class="bi bi-people me-1"></i> Wszystkie
+                <span class="badge text-bg-light ms-1" th:text="${total}">0</span>
+            </a>
+            <a th:href="@{/baza-wiedzy(moje=true)}" class="btn"
+               th:classappend="${moje} ? 'btn-secondary' : 'btn-outline-secondary'">
+                <i class="bi bi-person me-1"></i> Moje
+                <span class="badge text-bg-light ms-1" th:text="${totalMoje}">0</span>
+            </a>
+        </div>
         <a th:href="@{/baza-wiedzy/nowa}" class="btn btn-primary">
             <i class="bi bi-plus-lg me-1"></i> Dodaj pare
         </a>
     </div>
 
+    <div th:if="${!moje}" class="alert alert-light border small py-2 mb-3" role="alert">
+        <i class="bi bi-info-circle me-1"></i>
+        Baza wiedzy jest <strong>wspólna dla zespołu</strong> — spójność odpowiedzi między
+        klientami jest celem produktu. Modyfikować parę może jej autor albo administrator.
+    </div>
+
     <div th:if="${pary.isEmpty()}" class="card">
         <div class="card-body text-center py-5">
             <i class="bi bi-inbox fs-1 text-body-tertiary"></i>
-            <p class="mt-3 mb-1 fw-semibold">Baza wiedzy jest pusta</p>
-            <p class="text-body-secondary small mb-3">
-                Dopasowywanie pytan nie ma jeszcze czego proponowac.
-                Dodaj pierwsza pare albo wczytaj dane startowe.
-            </p>
-            <a th:href="@{/baza-wiedzy/nowa}" class="btn btn-outline-primary btn-sm">Dodaj pierwsza pare</a>
+            <p class="mt-3 mb-1 fw-semibold"
+               th:text="${moje} ? 'Nie dodałeś jeszcze żadnej pary' : 'Baza wiedzy jest pusta'">Pusto</p>
+            <p class="text-body-secondary small mb-3"
+               th:text="${moje}
+                   ? 'Pary dodane przez ciebie pojawią się tutaj.'
+                   : 'Dopasowywanie pytań nie ma jeszcze czego proponować.'"></p>
+            <a th:href="@{/baza-wiedzy/nowa}" class="btn btn-outline-primary btn-sm">Dodaj parę</a>
         </div>
     </div>
 
@@ -28,10 +51,11 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead>
                     <tr>
-                        <th style="width: 42%">Pytanie</th>
-                        <th style="width: 38%">Odpowiedz</th>
-                        <th style="width: 10%">Dodano</th>
-                        <th style="width: 10%" class="text-end">Akcje</th>
+                        <th style="width: 36%">Pytanie</th>
+                        <th style="width: 34%">Odpowiedz</th>
+                        <th style="width: 12%">Autor</th>
+                        <th style="width: 9%">Dodano</th>
+                        <th style="width: 9%" class="text-end">Akcje</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -42,20 +66,32 @@
                         <td>
                             <span class="text-body-secondary small" th:text="${para.answer}">odpowiedz</span>
                         </td>
+                        <td class="small">
+                            <span th:if="${para.author != null}" th:text="${para.author.username}">autor</span>
+                            <span th:if="${para.author == null}"
+                                  class="badge text-bg-light border" title="Dane startowe systemu">systemowa</span>
+                        </td>
                         <td class="small text-body-tertiary text-nowrap"
                             th:text="${#temporals.format(para.createdAt, 'dd.MM.yyyy')}">data</td>
                         <td class="text-end text-nowrap">
-                            <a th:href="@{/baza-wiedzy/{id}/edycja(id=${para.id})}"
-                               class="btn btn-sm btn-outline-secondary" title="Edytuj">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <form th:action="@{/baza-wiedzy/{id}/usun(id=${para.id})}" method="post"
-                                  class="d-inline"
-                                  onsubmit="return confirm('Usunac te pare pytanie-odpowiedz?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Usun">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
+                            <th:block th:if="${mozeEdytowac[para.id]}">
+                                <a th:href="@{/baza-wiedzy/{id}/edycja(id=${para.id})}"
+                                   class="btn btn-sm btn-outline-secondary" title="Edytuj">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form th:action="@{/baza-wiedzy/{id}/usun(id=${para.id})}" method="post"
+                                      class="d-inline"
+                                      onsubmit="return confirm('Usunac te pare pytanie-odpowiedz?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Usun">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </th:block>
+                            <span th:unless="${mozeEdytowac[para.id]}"
+                                  class="text-body-tertiary small"
+                                  title="Modyfikować może autor albo administrator">
+                                <i class="bi bi-lock"></i>
+                            </span>
                         </td>
                     </tr>
                     </tbody>
@@ -68,12 +104,12 @@
             <span class="small text-body-secondary"
                   th:text="'Strona ' + (${pary.number} + 1) + ' z ' + ${pary.totalPages}">strony</span>
             <div class="btn-group btn-group-sm">
-                <a th:href="@{/baza-wiedzy(page=${pary.number - 1})}"
+                <a th:href="@{/baza-wiedzy(page=${pary.number - 1}, moje=${moje})}"
                    class="btn btn-outline-secondary"
                    th:classappend="${pary.first} ? 'disabled'">
                     <i class="bi bi-chevron-left"></i> Poprzednia
                 </a>
-                <a th:href="@{/baza-wiedzy(page=${pary.number + 1})}"
+                <a th:href="@{/baza-wiedzy(page=${pary.number + 1}, moje=${moje})}"
                    class="btn btn-outline-secondary"
                    th:classappend="${pary.last} ? 'disabled'">
                     Nastepna <i class="bi bi-chevron-right"></i>

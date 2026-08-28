@@ -1,6 +1,6 @@
 # PRD — Ankietor
 
-**Wersja:** 0.3
+**Wersja:** 0.4
 **Data:** 2026-08-27
 **Autor:** Paweł Jarosz
 **Kontekst:** projekt zaliczeniowy 10xDevs 3.0, termin złożenia 14.09.2026
@@ -192,6 +192,45 @@ Test na B1 jest uruchamiany warunkowo — tylko gdy tryb semantyczny jest aktywn
 Migracje: Flyway. Migracja włączająca tryb semantyczny jest napisana od początku, ale trzymana osobno.
 
 **Dane w projekcie zaliczeniowym są syntetyczne.** Domena odzwierciedla realny obszar (certyfikaty, ISO, ubezpieczenia, NDA, dane rejestrowe), treść pytań i odpowiedzi jest wymyślona. Żadnych rzeczywistych danych firmowych ani danych klientów.
+
+## 6a. Model widoczności i własności
+
+**Decyzja podjęta 2026-08-28.** Wcześniej baza wiedzy była wspólna i każdy zalogowany
+mógł edytować oraz usuwać wszystko — a **nigdzie nie było zapisane, czy to decyzja, czy
+przeoczenie**. To ryzyko R-4 z [test-plan.md](test-plan.md).
+
+| Operacja | Reguła |
+|---|---|
+| **Odczyt** | wspólny dla wszystkich zalogowanych |
+| **Dopasowanie** | działa na całej bazie, niezależnie od autorstwa |
+| **Widok „moje pary"** | filtr pokazujący wyłącznie pary utworzone przez zalogowanego użytkownika |
+| **Edycja i usuwanie** | wyłącznie autor pary albo `ROLE_ADMIN` |
+| **Pary z danych startowych** (bez autora) | wyłącznie `ROLE_ADMIN` — zawartość systemowa |
+
+### Dlaczego odczyt jest wspólny, a nie prywatny
+
+Prywatna baza per użytkownik **zniszczyłaby cel produktu**. Problem opisany w §1 to
+niespójność odpowiedzi między klientami. Jeśli dwie osoby w firmie mają rozłączne bazy,
+dokładnie ta niespójność wraca — tylko trudniej ją zauważyć, bo każdy widzi u siebie
+porządek.
+
+Baza wiedzy jest zasobem zespołu. To jest cecha produktu, nie luka w autoryzacji.
+
+### Dlaczego modyfikacja jest własnościowa
+
+Wspólny odczyt nie wymaga wspólnego zapisu. Autor odpowiedzi wie, w jakim kontekście ją
+napisał, więc on ją poprawia. Administrator ma dostęp do wszystkiego, żeby dało się
+poprawić pary po osobie, która odeszła z firmy.
+
+Konsekwencja praktyczna: przypadkowe usunięcie cudzej pracy jest niemożliwe bez
+uprawnień administratora.
+
+### Zabezpieczenie jest w serwisie, nie w widoku
+
+Widok ukrywa przyciski edycji dla par, których użytkownik nie jest autorem — ale to
+**wygoda, nie zabezpieczenie**. Regułę wymusza `QuestionAnswerService`, w każdej operacji
+zapisu, więc podmiana identyfikatora w żądaniu POST nic nie da. Pokryte testem
+`OwnershipTest.obcyNieNadpisujePrzezPost`.
 
 ## 7. Mapowanie na wymagania certyfikacji 10xDevs
 
