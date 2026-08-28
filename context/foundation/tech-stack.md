@@ -1,7 +1,7 @@
 # Tech Stack — Ankietor
 
 **Data:** 2026-08-27
-**Powiązane:** [prd.md](prd.md), `infrastructure.md` (do wykonania)
+**Powiązane:** [prd.md](prd.md), [infrastructure.md](infrastructure.md)
 
 Dokument uzasadnia wybory techniczne. Kryteria oceny wzięte z lekcji 4.1 preworku: **typowany, oparty na konwencjach, popularny w danych treningowych, dobrze udokumentowany**.
 
@@ -25,7 +25,7 @@ Dokument uzasadnia wybory techniczne. Kryteria oceny wzięte z lekcji 4.1 prewor
 | Testy | JUnit 5, Spring Boot Test, MockMvc | z Boota |
 | Dev loop | `spring-boot-devtools` (`runtime`, `optional`) | z Boota |
 | CI | GitHub Actions | — |
-| Hosting | **do rozstrzygnięcia** → `infrastructure.md` | — |
+| Hosting | Render (aplikacja) + Neon (baza), plany Free | → [infrastructure.md](infrastructure.md) |
 
 ## 2. Ocena stacku wg kryteriów agent-friendly
 
