@@ -1,0 +1,32 @@
+{
+  "package": "@przeprogramowani/10x-cli",
+  "version": "1.20.0",
+  "manifestVersion": 3,
+  "lastApplied": "2026-08-28T10:19:52.594Z",
+  "lessonId": "m0l0",
+  "course": "10xdevs3",
+  "tool": "claude-code",
+  "files": {
+    "skills": {},
+    "prompts": [
+      "skill-explainer.md",
+      "mvp-check.md"
+    ],
+    "configs": [],
+    "promptHashes": {
+      "skill-explainer.md": "6ee36d65134a8f6ecc8062b15362bde673c702e1b71c09ac7455bc84e29b2848",
+      "mvp-check.md": "925dbc3beb572cb90e858c8ec1ed6c813803cc7169bbf8be727cf29a83ccd839"
+    }
+  },
+  "lessons": {
+    "m0l0": {
+      "appliedAt": "2026-08-28T10:19:52.592Z",
+      "skills": {},
+      "prompts": [
+        "skill-explainer.md",
+        "mvp-check.md"
+      ],
+      "configs": []
+    }
+  }
+}
