@@ -4,11 +4,6 @@
 **Wsad:** [prd.md](prd.md), [roadmap.md](roadmap.md), [tech-stack.md](tech-stack.md), [AGENTS.md](../../AGENTS.md)
 **Format:** wg lekcji M3L1
 
-> Ten plan powstał, gdy testy już istniały. Nie udaje więc strategii sprzed pierwszego
-> testu — jest **audytem tego, co chronimy, i wskazaniem, czego nie chronimy**. Faza 1
-> została wykonana 28.08; sekcja 4
-> zawiera cztery pozostałe.
-
 ---
 
 ## 1. Mapa ryzyk

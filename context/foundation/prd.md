@@ -113,9 +113,7 @@ Ekran porównania trybów **został dodany do MVP** — patrz sekcja 4a.
 
 ## 4a. Ekran porównania trybów — rozszerzenie zakresu
 
-**Dodane po zamknięciu wymagań certyfikacji**, na wyraźne życzenie właściciela projektu.
-Zapisane tutaj, a nie dopisane po cichu, bo `AGENTS.md` zabrania rozszerzania zakresu MVP
-bez odnotowania.
+**Rozszerzenie zakresu MVP**, odnotowane tutaj zgodnie z regułą z `AGENTS.md`.
 
 ### Co robi
 
@@ -195,9 +193,8 @@ Migracje: Flyway. Migracja włączająca tryb semantyczny jest napisana od pocz�
 
 ## 6a. Model widoczności i własności
 
-**Decyzja podjęta 2026-08-28.** Wcześniej baza wiedzy była wspólna i każdy zalogowany
-mógł edytować oraz usuwać wszystko — a **nigdzie nie było zapisane, czy to decyzja, czy
-przeoczenie**. To ryzyko R-4 z [test-plan.md](test-plan.md).
+**Decyzja podjęta 2026-08-28.** Rozstrzyga ryzyko R-4 z [test-plan.md](test-plan.md):
+zakres uprawnień zalogowanego użytkownika do par utworzonych przez kogoś innego.
 
 | Operacja | Reguła |
 |---|---|

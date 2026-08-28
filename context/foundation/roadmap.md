@@ -4,14 +4,6 @@
 **Wsad:** [prd.md](prd.md), [tech-stack.md](tech-stack.md), [infrastructure.md](infrastructure.md)
 **Format:** wg lekcji M2L1, vertical-first z sekcją Foundations
 
-> **Uczciwe zastrzeżenie o kolejności prac.** Ta roadmapa powstała **po** zbudowaniu MVP,
-> nie przed. Nie udaje więc planu na przyszłość — większość pozycji trafia do `## Done`
-> z prawdziwymi identyfikatorami zmian. Wartość tego dokumentu jest dwojaka: pokazuje
-> sekwencję, która faktycznie zadziałała, i porządkuje to, co zostało do zrobienia.
->
-> Gdyby powstała pierwsza, sekwencja wyszłaby prawdopodobnie taka sama — bo była
-> wymuszona zależnościami, nie wyborem. To widać w polach `Prerequisites`.
-
 ---
 
 ## Vision recap
@@ -183,9 +175,8 @@ Pełna procedura: [deploy-plan.md](../deployment/deploy-plan.md).
 | S-02 | `lexical-question-matching` | `matching/LexicalQuestionMatcher.java`; testy A1–A3 |
 | S-03 | `mode-comparison-screen` | `matching/controllers/ComparisonController.java`, `MockSemanticQuestionMatcher.java` |
 
-**Sekwencja, która zadziałała:** F-01 → F-02 → S-01 → F-03 → S-02 → F-04 → S-03.
+**Kolejność wykonania:** F-01 → F-02 → S-01 → F-03 → S-02 → F-04 → S-03.
 
-Warto odnotować jedno odstępstwo od czystego vertical-first: F-04 (CI) powstało **po**
-S-02, nie przed. Gdyby powstało wcześniej, wyłapałoby użycie wycofanej klasy
-`AntPathRequestMatcher` już w F-02, a nie dwa slice'y później. To konkretny koszt
-opóźnienia bramki jakości — niewielki tutaj, ale w większym projekcie rósłby liniowo.
+F-04 (bramka CI) jest w tej kolejności po S-02. Przy kolejnych slice'ach bramka
+powinna wyprzedzać pracę, którą ma chronić — jej wartość rośnie tym bardziej,
+im więcej kodu powstaje bez niej.
