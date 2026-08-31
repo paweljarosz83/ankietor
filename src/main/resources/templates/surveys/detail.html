@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: html(
+          tytul=${ankieta.nazwa},
+          podtytul=${ankieta.klient != null}
+              ? ('Klient: ' + ${ankieta.klient})
+              : 'Ankieta bez przypisanego klienta',
+          aktywny='ankiety',
+          zawartosc=~{::zawartosc})}">
+<body>
+<th:block th:fragment="zawartosc">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <a th:href="@{/moje-ankiety}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Wroc do listy
+        </a>
+        <div class="d-flex gap-2 align-items-center">
+            <span class="small text-body-secondary">
+                Wlasciciel: <span class="badge text-bg-light border" th:text="${ankieta.owner.username}">owner</span>
+            </span>
+            <form th:if="${mozeModyfikowac}" th:action="@{/moje-ankiety/{id}/usun(id=${ankieta.id})}"
+                  method="post" class="d-inline"
+                  onsubmit="return confirm('Usunac cala ankiete wraz z pozycjami?');">
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                    <i class="bi bi-trash me-1"></i> Usun ankiete
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${!mozeModyfikowac}" class="alert alert-secondary py-2 small" role="alert">
+        <i class="bi bi-shield-lock me-1"></i>
+        Ogladasz ankiete innego uzytkownika w trybie tylko do odczytu. Modyfikowac moze ja
+        wylacznie jej wlasciciel.
+    </div>
+
+    <div th:if="${ankieta.pozycje.isEmpty()}" class="card">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-inbox fs-1 text-body-tertiary"></i>
+            <p class="mt-3 mb-1 fw-semibold">Ankieta jest pusta</p>
+            <p class="text-body-secondary small mb-3">
+                Odpowiedzi dodajesz z ekranu dopasowania — przyciskiem „Zapisz do ankiety".
+            </p>
+            <a th:href="@{/szukaj}" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-search me-1"></i> Przejdz do dopasowania
+            </a>
+        </div>
+    </div>
+
+    <div th:unless="${ankieta.pozycje.isEmpty()}">
+        <p class="small text-body-secondary mb-2">
+            Pozycji: <strong th:text="${ankieta.liczbaPozycji()}">0</strong>.
+            Kolejnosc odpowiada momentowi zapisania.
+        </p>
+
+        <div class="card mb-2" th:each="p, stat : ${ankieta.pozycje}">
+            <div class="card-header d-flex justify-content-between align-items-start gap-2">
+                <span class="fw-medium">
+                    <span class="badge text-bg-secondary me-2" th:text="${stat.count}">1</span>
+                    <span th:text="${p.pytanie}">pytanie</span>
+                </span>
+                <form th:if="${mozeModyfikowac}"
+                      th:action="@{/moje-ankiety/{a}/pozycje/{p}/usun(a=${ankieta.id}, p=${p.id})}"
+                      method="post" class="d-inline flex-shrink-0"
+                      onsubmit="return confirm('Usunac te pozycje z ankiety?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Usun pozycje">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </form>
+            </div>
+            <div class="card-body">
+                <p class="mb-2" th:text="${p.odpowiedz}">odpowiedz</p>
+                <p class="small text-body-tertiary mb-0">
+                    <span th:if="${p.source != null}">
+                        <i class="bi bi-link-45deg"></i>
+                        Zrodlo: para z bazy wiedzy
+                        <a th:href="@{/baza-wiedzy}" class="text-decoration-none">#<span th:text="${p.source.id}">1</span></a>
+                    </span>
+                    <span th:if="${p.source == null}">
+                        <i class="bi bi-pencil"></i> Odpowiedz wlasna albo zrodlo usuniete z bazy wiedzy
+                    </span>
+                    &middot;
+                    <span th:text="${#temporals.format(p.createdAt, 'dd.MM.yyyy HH:mm')}">data</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</th:block>
+</body>
+</html>

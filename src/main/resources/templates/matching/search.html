@@ -45,8 +45,8 @@
 
     <div th:if="${not propozycje.isEmpty()}">
         <p class="small text-body-secondary mb-2">
-            Znalezione propozycje, uszeregowane po podobienstwie.
-            Wybierz najblizsza, popraw ja i zapisz jako nowa pare.
+            Znalezione propozycje, uszeregowane po podobienstwie. Wybierz najblizsza,
+            zapisz ja do ankiety albo popraw i dodaj jako nowa pare.
         </p>
 
         <div class="card mb-3" th:each="p, stat : ${propozycje}">
@@ -59,16 +59,51 @@
             </div>
             <div class="card-body">
                 <p class="mb-3" th:text="${p.answer}">odpowiedz</p>
-                <a th:href="@{/baza-wiedzy/nowa(pytanie=${pytanie}, odpowiedz=${p.answer})}"
-                   class="btn btn-sm btn-primary">
-                    <i class="bi bi-arrow-down-square me-1"></i> Uzyj tej odpowiedzi
-                </a>
-                <a th:href="@{/baza-wiedzy/{id}/edycja(id=${p.id})}"
-                   class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-pencil me-1"></i> Edytuj oryginal
-                </a>
+
+                <form th:action="@{/moje-ankiety/zapisz-pozycje}" method="post"
+                      class="row g-2 align-items-end border-top pt-3">
+                    <input type="hidden" name="pytanie" th:value="${pytanie}">
+                    <input type="hidden" name="odpowiedz" th:value="${p.answer}">
+                    <input type="hidden" name="sourceId" th:value="${p.id}">
+
+                    <div class="col-md-6" th:if="${not mojeAnkiety.isEmpty()}">
+                        <label class="form-label small fw-semibold"
+                               th:for="'ankieta-' + ${stat.index}">Zapisz do ankiety</label>
+                        <select class="form-select form-select-sm" name="ankietaId"
+                                th:id="'ankieta-' + ${stat.index}">
+                            <option th:each="a : ${mojeAnkiety}"
+                                    th:value="${a.id}"
+                                    th:text="${a.nazwa} + ' (' + ${a.liczbaPozycji()} + ')'">ankieta</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6" th:if="${mojeAnkiety.isEmpty()}">
+                        <label class="form-label small fw-semibold"
+                               th:for="'nowa-' + ${stat.index}">Nazwa nowej ankiety</label>
+                        <input type="text" class="form-control form-control-sm" name="nazwaNowej"
+                               th:id="'nowa-' + ${stat.index}"
+                               placeholder="np. Ankieta kwalifikacyjna Q3" maxlength="200">
+                    </div>
+
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-sm btn-success w-100">
+                            <i class="bi bi-journal-plus me-1"></i> Zapisz do ankiety
+                        </button>
+                    </div>
+                    <div class="col-md-3">
+                        <a th:href="@{/baza-wiedzy/nowa(pytanie=${pytanie}, odpowiedz=${p.answer})}"
+                           class="btn btn-sm btn-outline-secondary w-100">
+                            <i class="bi bi-pencil me-1"></i> Popraw i dodaj
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
+
+        <p class="small text-body-tertiary" th:if="${mojeAnkiety.isEmpty()}">
+            <i class="bi bi-info-circle me-1"></i>
+            Nie masz jeszcze zadnej ankiety — pierwsza powstanie automatycznie przy zapisie.
+        </p>
     </div>
 
 </th:block>

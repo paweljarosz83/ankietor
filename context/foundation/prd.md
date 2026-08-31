@@ -1,6 +1,6 @@
 # PRD — Ankietor
 
-**Wersja:** 0.4
+**Wersja:** 0.5
 **Data:** 2026-08-27
 **Autor:** Paweł Jarosz
 **Kontekst:** projekt zaliczeniowy 10xDevs 3.0, termin złożenia 14.09.2026
@@ -229,6 +229,53 @@ Widok ukrywa przyciski edycji dla par, których użytkownik nie jest autorem —
 zapisu, więc podmiana identyfikatora w żądaniu POST nic nie da. Pokryte testem
 `OwnershipTest.obcyNieNadpisujePrzezPost`.
 
+## 6b. Poziomy uprawnień i zasoby prywatne
+
+Aplikacja rozróżnia **dwa rodzaje zasobów**, każdy z inną regułą dostępu.
+
+| | Baza wiedzy (`question_answers`) | Ankiety (`ankiety`) |
+|---|---|---|
+| Charakter | zasób **zespołu** | zasób **prywatny użytkownika** |
+| Właściciel | opcjonalny — dane startowe go nie mają | **wymagany**, kolumna `NOT NULL` |
+| Odczyt | wszyscy zalogowani | właściciel; administrator na żądanie |
+| Modyfikacja | autor albo administrator | **wyłącznie właściciel** |
+| Widok własny | filtr „moje pary" | osobny ekran „Moje ankiety" |
+
+### Dlaczego dwa rodzaje, a nie jeden
+
+Baza wiedzy musi być wspólna, bo celem produktu jest spójność odpowiedzi między klientami.
+Ankieta jest czymś innym: to dokument konkretnej osoby wobec konkretnego klienta, który ta
+osoba wypełnia i wysyła. Wspólna ankieta nie miałaby sensu — tak samo jak wspólna baza
+wiedzy jest konieczna.
+
+Stąd `ankiety.owner_id` jest `NOT NULL`, a `question_answers.author_id` może być puste.
+
+### Rola administratora: wgląd, nie wyręczanie
+
+Administrator **widzi** wszystkie ankiety — po to, żeby dało się odtworzyć, co zostało
+wysłane klientowi przez osobę, która odeszła z firmy.
+
+Administrator **nie może modyfikować** cudzej ankiety. To celowe rozdzielenie: wgląd
+i prawo zapisu są dwoma osobnymi uprawnieniami, a nie jednym „administrator może wszystko".
+Ekran cudzej ankiety jest oznaczony jako tryb tylko do odczytu.
+
+Domyślnie administrator widzi wyłącznie swoje ankiety — pełną listę włącza jawnie
+przełącznikiem, więc wgląd w cudze dane jest świadomym działaniem, nie stanem domyślnym.
+
+### Przepływ zapisu
+
+Na ekranie dopasowania każda propozycja ma przycisk **„Zapisz do ankiety"**. Gdy użytkownik
+nie ma jeszcze żadnej ankiety, pierwsza powstaje w locie przy zapisie — pierwsza odpowiedź
+nie wymaga wcześniejszego zakładania dokumentu.
+
+Pozycja ankiety zachowuje odnośnik do pary z bazy wiedzy (`source_id`), ale relacja ma
+`ON DELETE SET NULL`. Usunięcie pary z bazy wiedzy nie może skasować historii tego,
+co poszło do klienta.
+
+### Pokrycie testami
+
+`AnkietaPermissionsTest` — 13 testów w czterech grupach: izolacja między użytkownikami,
+wgląd administratora, granica między wglądem a zapisem, oraz główny przepływ przycisku.
 ## 7. Mapowanie na wymagania certyfikacji 10xDevs
 
 | # | Wymaganie | Jak spełnione |

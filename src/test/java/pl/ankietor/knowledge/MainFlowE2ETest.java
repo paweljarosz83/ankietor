@@ -70,7 +70,7 @@ class MainFlowE2ETest {
         mvc.perform(get("/szukaj").param("pytanie", "Czy posiadacie aktualne certyfikaty ISO 9001?"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("ISO 9001")))
-                .andExpect(content().string(containsString("Uzyj tej odpowiedzi")));
+                .andExpect(content().string(containsString("Zapisz do ankiety")));
     }
 
     @Test
@@ -80,7 +80,7 @@ class MainFlowE2ETest {
         mvc.perform(get("/szukaj").param("pytanie", "Jaka jest srednia temperatura wrzenia azotu"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Brak dopasowania powyzej progu")))
-                .andExpect(content().string(not(containsString("Uzyj tej odpowiedzi"))));
+                .andExpect(content().string(not(containsString("Zapisz do ankiety"))));
     }
 
     @Test

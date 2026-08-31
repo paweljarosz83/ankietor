@@ -68,6 +68,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a th:href="@{/moje-ankiety}" class="nav-link"
+                           th:classappend="${aktywny == 'ankiety'} ? 'active'">
+                            <i class="nav-icon bi bi-journal-text"></i>
+                            <p>Moje ankiety</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a th:href="@{/baza-wiedzy}" class="nav-link"
                            th:classappend="${aktywny == 'baza'} ? 'active'">
                             <i class="nav-icon bi bi-database"></i>

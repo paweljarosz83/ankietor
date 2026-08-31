@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: html(
+          tytul=${wszystkie} ? 'Wszystkie ankiety' : 'Moje ankiety',
+          podtytul=${wszystkie}
+              ? 'Widok administratora — ankiety wszystkich uzytkownikow'
+              : 'Ankiety przypisane do twojego konta',
+          aktywny='ankiety',
+          zawartosc=~{::zawartosc})}">
+<body>
+<th:block th:fragment="zawartosc">
+
+    <div th:if="${blad}" class="alert alert-danger py-2 small" role="alert" th:text="${blad}"></div>
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <div th:if="${admin}" class="btn-group btn-group-sm" role="group">
+            <a th:href="@{/moje-ankiety}" class="btn"
+               th:classappend="${wszystkie} ? 'btn-outline-secondary' : 'btn-secondary'">
+                <i class="bi bi-person me-1"></i> Moje
+                <span class="badge text-bg-light ms-1" th:text="${liczbaWlasnych}">0</span>
+            </a>
+            <a th:href="@{/moje-ankiety(wszystkie=true)}" class="btn"
+               th:classappend="${wszystkie} ? 'btn-secondary' : 'btn-outline-secondary'">
+                <i class="bi bi-shield-lock me-1"></i> Wszystkie
+            </a>
+        </div>
+        <span th:unless="${admin}" class="small text-body-secondary">
+            <i class="bi bi-lock me-1"></i> Widzisz wylacznie swoje ankiety
+        </span>
+
+        <button class="btn btn-primary" type="button"
+                data-bs-toggle="collapse" data-bs-target="#nowaAnkieta">
+            <i class="bi bi-plus-lg me-1"></i> Nowa ankieta
+        </button>
+    </div>
+
+    <div class="collapse mb-3" id="nowaAnkieta">
+        <div class="card card-body">
+            <form th:action="@{/moje-ankiety}" method="post" class="row g-2 align-items-end">
+                <div class="col-md-5">
+                    <label for="nazwa" class="form-label small fw-semibold">Nazwa ankiety</label>
+                    <input type="text" id="nazwa" name="nazwa" class="form-control" required
+                           maxlength="200" placeholder="np. Ankieta kwalifikacyjna Q3">
+                </div>
+                <div class="col-md-5">
+                    <label for="klient" class="form-label small fw-semibold">Klient (opcjonalnie)</label>
+                    <input type="text" id="klient" name="klient" class="form-control"
+                           maxlength="200" placeholder="np. nazwa kontrahenta">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Utworz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div th:if="${ankiety.isEmpty()}" class="card">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-journal-text fs-1 text-body-tertiary"></i>
+            <p class="mt-3 mb-1 fw-semibold"
+               th:text="${wszystkie} ? 'Nikt nie ma jeszcze zadnych ankiet' : 'Nie masz jeszcze zadnej ankiety'">Pusto</p>
+            <p class="text-body-secondary small mb-0">
+                Ankiete zalozysz przyciskiem powyzej albo od razu z ekranu
+                <a th:href="@{/szukaj}">Dopasuj pytanie</a>, zapisujac pierwsza odpowiedz.
+            </p>
+        </div>
+    </div>
+
+    <div th:unless="${ankiety.isEmpty()}" class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th style="width: 34%">Nazwa</th>
+                        <th style="width: 24%">Klient</th>
+                        <th th:if="${wszystkie}" style="width: 14%">Wlasciciel</th>
+                        <th style="width: 10%">Pozycji</th>
+                        <th style="width: 12%">Utworzono</th>
+                        <th style="width: 6%" class="text-end"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="a : ${ankiety}">
+                        <td>
+                            <a th:href="@{/moje-ankiety/{id}(id=${a.id})}"
+                               class="fw-medium text-decoration-none" th:text="${a.nazwa}">nazwa</a>
+                        </td>
+                        <td class="small text-body-secondary">
+                            <span th:if="${a.klient != null}" th:text="${a.klient}">klient</span>
+                            <span th:if="${a.klient == null}" class="text-body-tertiary">&mdash;</span>
+                        </td>
+                        <td th:if="${wszystkie}" class="small">
+                            <span class="badge text-bg-light border" th:text="${a.owner.username}">owner</span>
+                        </td>
+                        <td>
+                            <span class="badge text-bg-secondary" th:text="${a.liczbaPozycji()}">0</span>
+                        </td>
+                        <td class="small text-body-tertiary text-nowrap"
+                            th:text="${#temporals.format(a.createdAt, 'dd.MM.yyyy')}">data</td>
+                        <td class="text-end">
+                            <a th:href="@{/moje-ankiety/{id}(id=${a.id})}"
+                               class="btn btn-sm btn-outline-secondary" title="Otworz">
+                                <i class="bi bi-box-arrow-in-right"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</th:block>
+</body>
+</html>
