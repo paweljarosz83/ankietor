@@ -58,10 +58,9 @@ public class AnkietaService {
      */
     @Transactional(readOnly = true)
     public Ankieta pobierz(Long id, User user) {
-        Ankieta a = repository.findById(id)
+        Ankieta a = repository.findWithPozycjeById(id)
                 .orElseThrow(() -> new NoSuchElementException("Nie ma ankiety o id " + id));
         wymagajDostepu(a, user);
-        a.getPozycje().size(); // inicjalizacja kolekcji w transakcji
         return a;
     }
 
