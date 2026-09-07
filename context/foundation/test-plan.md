@@ -24,6 +24,12 @@ dla planu testów.
 | R-8 | Hasło albo adres serwera trafia do repozytorium | **wysoki** | niskie | **2** | AGENTS.md, reguła twarda |
 | R-9 | Użytkownik wpisuje bardzo długi tekst i psuje widok albo zapis | niski | średnie | **3** | wejście od użytkownika |
 | R-10 | Konto administratora powstaje z hasłem, którego nikt nie zna | średni | średnie | **3** | `infrastructure.md` §7 |
+| R-11 | Użytkownik widzi ankietę innej osoby — listą albo przez podmianę identyfikatora w adresie | **wysoki** | średnie | **1** | nadużycie, IDOR na zasobie prywatnym; `prd.md` §6b |
+| R-12 | Widok sięga po powiązanie encji już po zamknięciu transakcji i wywala się dopiero u użytkownika | średni | **wysokie** | **2** | `open-in-view=false`; test transakcyjny tego nie wychwyci |
+
+R-11 i R-12 dopisane po wprowadzeniu ankiet jako zasobu prywatnego. R-11 jest odpowiednikiem
+R-4, ale na zasobie o innej charakterystyce: parę w bazie wiedzy każdy może **czytać**,
+cudzej ankiety nie wolno nawet wyświetlić.
 
 **Poza zakresem testów** — odpowiedź na pytanie „na co nie ma iść budżet testowy":
 
@@ -34,7 +40,7 @@ dla planu testów.
 
 ## 2. Profil istniejących testów
 
-**34 testy, cztery klasy.** Brak testów jednostkowych w klasycznym sensie —
+**51 testów, sześć klas.** Brak testów jednostkowych w klasycznym sensie —
 wszystkie testy podnoszą kontekst Springa i uderzają w prawdziwą bazę.
 
 | Klasa | Liczba | Poziom | Co chroni |
@@ -43,6 +49,14 @@ wszystkie testy podnoszą kontekst Springa i uderzają w prawdziwą bazę.
 | `MainFlowE2ETest` | 7 | przez MockMvc, pełny kontekst | R-3, R-5 |
 | `MockSemanticQuestionMatcherTest` | 7 | integracyjny | granica trybu leksykalnego |
 | `OwnershipTest` | 10 | przez MockMvc, dwóch użytkowników | R-4 |
+| `AnkietaPermissionsTest` | 13 | przez MockMvc, trzech użytkowników | R-11 |
+| `AnkietaRenderingTest` | 4 | MockMvc **bez transakcji testowej** | R-12 |
+
+`AnkietaRenderingTest` jest jedyną klasą bez `@Transactional` i to jest jej cała racja
+bytu. Test transakcyjny trzyma sesję Hibernate otwartą przez całą metodę, więc leniwe
+powiązanie zdąży się doczytać i błąd nie wychodzi — a w działającej aplikacji, przy
+`open-in-view=false`, ten sam widok wywala się przy renderowaniu. Klasa sprząta dane
+w `@AfterEach`, bo nie ma wycofania transakcji.
 
 **Konsekwencja tego profilu:** suita jest wolna (~90 s lokalnie) i wymaga dostępnej bazy.
 Zaakceptowane — uzasadnienie w `tech-stack.md` §3.3. Cena: nie da się uruchomić testów
@@ -53,6 +67,8 @@ w podróży ani bez sieci firmowej.
 | Ryzyko | Stan |
 |---|---|
 | R-4 — IDOR | ✅ **pokryte.** `OwnershipTest`, 10 testów: odczyt wspólny, modyfikacja własnościowa, widok „moje pary". Reguła zapisana w `prd.md` §6a |
+| R-11 — cudza ankieta | ✅ **pokryte.** `AnkietaPermissionsTest`, 13 testów: izolacja list, odmowa dostępu po identyfikatorze, wgląd administratora, granica między wglądem a zapisem |
+| R-12 — leniwe powiązania | ✅ **pokryte.** `AnkietaRenderingTest`, 4 testy bez transakcji. Wykrył dwa realne błędy: brakujący `pozycje` i — po pierwszej poprawce — `owner`, bo `@EntityGraph(attributePaths)` buduje graf FETCH i pola spoza listy stają się leniwe mimo `FetchType.EAGER` |
 | R-6 — kodowanie | **brak testu automatycznego.** Sprawdzone ręcznie w przeglądarce |
 | R-7 — sumy kontrolne migracji | **brak testu.** Złagodzone przez `.gitattributes` |
 | R-9 — długie wejście | **częściowo.** `@Size` waliduje górną granicę, brak testu na zachowanie widoku |
